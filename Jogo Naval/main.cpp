@@ -15,12 +15,10 @@ int main(){
     cout << "Jogador 1:\nDigite seu nome: ";
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     cin.getline(nome_j1,51);
-    cout << nome_j1 << endl;
 
     cout << "\n";
     cout << "Jogador 2:\nDigite seu nome: ";
     cin.getline(nome_j2,51);
-    cout << nome_j2;
 
     if(!leitura_jogadores(nome_j1,nome_j2)) return false;
     if (!validacao()) return false;
@@ -28,7 +26,7 @@ int main(){
 
     ifstream conf("config.txt");
     if(!conf){
-        cout << "Erro" << endl;
+        cout << "Erro ao abrir arquivo de configuracao." << endl;
         return 1;
     }
 
@@ -47,6 +45,7 @@ int main(){
     char tabuleiro_referencia_jogador1[num_linhas][num_colunas];
     char tabuleiro_referencia_jogador2[num_linhas][num_colunas];
 
+    //Inicialização dos tabuleiros com ~ ("agua") 
     for(int i=0;i<num_linhas;i++){
         for(int j=0;j<num_colunas;j++){
             tabuleiro_jogador1[i][j]='~';
@@ -59,13 +58,13 @@ int main(){
 
     ifstream player1("jogador1.txt");
     if(!player1){
-        cout << "Erro" << endl;
+        cout << "Erro ao abrir arquivo de jogador 1" << endl;
         return 1;
     }
 
     ifstream player2("jogador2.txt");
     if(!player2){
-        cout << "Erro" << endl;
+        cout << "Erro ao abrir arquivo de jogador 2" << endl;
         return 1;
     }    
 
@@ -148,7 +147,6 @@ int main(){
 
             cout << "Digite a linha e a coluna do disparo: ";
             cin >> linha >> coluna;
-            cin.ignore();
 
             while(linha>=num_linhas || coluna>=num_colunas){
                 cout << "\nPonto fora dos limites do tabuleiro" << endl;
@@ -274,7 +272,6 @@ int main(){
 
             cout << "digite a linha e a coluna do disparo: ";
             cin >> linha >> coluna;
-            cin.ignore();
 
             while(linha>=num_linhas || coluna>=num_colunas){
                 cout << "\nPonto fora dos limites do tabuleiro" << endl;
