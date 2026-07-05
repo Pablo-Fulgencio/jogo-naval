@@ -1,77 +1,32 @@
 #include <iostream>
 #include <fstream>
-#include <limits>
-#include <iomanip>
 #include "funcoes.h"
+#define MAX 1000
 using namespace std;
 
-void print_board_header(int num_colunas){
-    cout << "   ";
-    for(int i = 0; i < num_colunas; i++){
-        if(i < 10) cout << "  " << i;
-        else cout << " " << i;
-    }
-    cout << endl;
-}
-
-void print_board_row(int linha, const char row[], int num_colunas, bool mostra_navios){
-    if(linha < 10) cout << linha << "  ";
-    else cout << linha << " ";
-    
-    for(int j = 0; j < num_colunas; j++){
-        char c = row[j];
-        cout << " ";
-        if(mostra_navios){
-            if(c == 'N') cout << "\033[104;92mN\033[0m ";
-            else cout << "\033[104;34m~\033[0m ";
-        } else {
-            if(c == 'X') cout << "\033[104;92mX\033[0m ";
-            else if(c == 'O') cout << "\033[104;91mO\033[0m ";
-            else cout << "\033[104;34m~\033[0m ";
-        }
-    }
-    cout << endl;
-}
+struct Jogador{
+    char nome[51];
+    char tabuleiro[MAX][MAX];
+    char tabuleiro_referencia[MAX][MAX];
+};
 
 int main(){
 
-    inicializar_ncurses();
-    limpar_tela();
-    if(!menu()) {
-        finalizar_ncurses();
-        return 0;
-    }
+    system("cls");
+    if(!menu()) return 0;
 
-    inicializar_ncurses();
+    Jogador jogador1,jogador2;
+    cout << "Jogador 1:\nDigite seu nome: ";
+    cin.ignore(1000, '\n');
+    cin.getline(jogador1.nome,51);
 
-    char nome_j1[51];
-    char nome_j2[51];
-    echo();
-    curs_set(1);
-
-    printw("Jogador 1:\nDigite seu nome: ");
-    refresh();
-    getnstr(nome_j1, 50);
-
-    printw("\nJogador 2:\nDigite seu nome: ");
-    refresh();
-    getnstr(nome_j2, 50);
-
-    noecho();
-    curs_set(0);
-
-    if(!leitura_jogadores(nome_j1,nome_j2)) {
-        finalizar_ncurses();
-        return 1;
-    }
-    if (!validacao()) {
-        finalizar_ncurses();
-        return 1;
-    }
+    cout << "\n";
+    cout << "Jogador 2:\nDigite seu nome: ";
+    cin.getline(jogador2.nome,51);
 
     ifstream conf("config.txt");
     if(!conf){
-        cout << "Erro ao abrir arquivo de configuracao." << endl;
+        cout << "Erro" << endl;
         return 1;
     }
 
@@ -80,36 +35,32 @@ int main(){
     conf >> num_linhas >> num_colunas >> embarcacoes;
     conf.close();
 
+    //inicializacao dos tabuleiros
+    for(int i=0;i<num_linhas;i++){
+        for(int j=0;j<num_colunas;j++){
+            jogador1.tabuleiro[i][j]='~';
+            jogador2.tabuleiro[i][j]='~';
+            jogador1.tabuleiro_referencia[i][j]='~';
+            jogador2.tabuleiro_referencia[i][j]='~';
+        }
+    }
+
+    if(!leitura_jogadores(jogador1.nome,jogador2.nome)) return false;
+    if (!validacao(jogador1.tabuleiro,jogador2.tabuleiro)) return false;
+
     //Declaracao do numero de celulas(navios completos) de cada jogador:
     int numero_de_celulas_j1 = embarcacoes*2;
     int numero_de_celulas_j2 = embarcacoes*2;
 
-    //Declaracao de tabuleiros dos jogadores e dos tabuleiros de referencia:
-    char tabuleiro_jogador1[num_linhas][num_colunas];
-    char tabuleiro_jogador2[num_linhas][num_colunas];
-    char tabuleiro_referencia_jogador1[num_linhas][num_colunas];
-    char tabuleiro_referencia_jogador2[num_linhas][num_colunas];
-
-    //Inicialização dos tabuleiros com ~ ("agua") 
-    for(int i=0;i<num_linhas;i++){
-        for(int j=0;j<num_colunas;j++){
-            tabuleiro_jogador1[i][j]='~';
-            tabuleiro_jogador2[i][j]='~';
-            tabuleiro_referencia_jogador1[i][j]='~';
-            tabuleiro_referencia_jogador2[i][j]='~';
-        }
-        }
-
-
     ifstream player1("jogador1.txt");
     if(!player1){
-        cout << "Erro ao abrir arquivo de jogador 1" << endl;
+        cout << "Erro" << endl;
         return 1;
     }
 
     ifstream player2("jogador2.txt");
     if(!player2){
-        cout << "Erro ao abrir arquivo de jogador 2" << endl;
+        cout << "Erro" << endl;
         return 1;
     }    
 
@@ -120,7 +71,7 @@ int main(){
 
     while(player1 >> linha){
         player1 >> coluna >> orientacao;
-        tabuleiro_jogador1[linha][coluna]='N';
+        jogador1.tabuleiro[linha][coluna]='N';
 
         if(orientacao == 'V')
             linha+=1;
@@ -128,12 +79,12 @@ int main(){
         else if(orientacao == 'H')
             coluna+=1;
 
-        tabuleiro_jogador1[linha][coluna] = 'N';
+        jogador1.tabuleiro[linha][coluna] = 'N';
     }
 
     while(player2 >> linha){
         player2 >> coluna >> orientacao;
-        tabuleiro_jogador2[linha][coluna]='N';
+        jogador2.tabuleiro[linha][coluna]='N';
 
         if(orientacao == 'V')
             linha+=1;
@@ -141,7 +92,7 @@ int main(){
         else if(orientacao == 'H')
             coluna+=1;
 
-        tabuleiro_jogador2[linha][coluna] = 'N';
+        jogador2.tabuleiro[linha][coluna] = 'N';
     }
     player1.close();
     player2.close();
@@ -154,131 +105,126 @@ int main(){
         //Alternador: alterna a vez da jogada entre par(jogador 1) e impar(jogador 2).
         if(alternador%2==0){
             alternador += 1;
-            limpar_tela();
+    
+            cout << "\n\nVez de: " << jogador1.nome<< endl;
+            cout << ".\n.\n." << endl;
+    
+            /* Imprime o tabuleiro de referencia do jogador 1 
+            Tabuleiro de refencia : Tabuleiro que mostra as jogadas realizadas pelo jogador, no tabuleiro adversario
+            sem mostrar as posicoes dos navios nao atingidos */
+    
+            imprime_tabuleiro_jogador(jogador1.tabuleiro_referencia,num_linhas,num_colunas);
+            cout << ".\n.\n." << endl;
 
-            cout << "\n\nVez de: " << nome_j1 << endl;
-            cout << "\nSeu tabuleiro:" << endl;
 
-            print_board_header(num_colunas);
-            for(int i = 0; i < num_linhas; i++){
-                print_board_row(i, tabuleiro_jogador1[i], num_colunas, true);
+            cout << "Digite a linha e a coluna do disparo: ";
+            cin >> linha >> coluna;
+
+            while(linha>=num_linhas || coluna>=num_colunas){
+                cout << "\nPonto fora dos limites do tabuleiro" << endl;
+                cout << "Digite novamente as coordenadas do disparo: "; 
+                cin >> linha >> coluna;
             }
 
-            cout << "\nSeu campo de ataques:" << endl;
-            print_board_header(num_colunas);
-            for(int i = 0; i < num_linhas; i++){
-                print_board_row(i, tabuleiro_referencia_jogador1[i], num_colunas, false);
+            while(jogador1.tabuleiro_referencia[linha][coluna] == 'X' || jogador1.tabuleiro_referencia[linha][coluna] == 'O'){
+                cout << "\nVoce ja realizou um disparo nessa posicao." << endl;
+                cout << "Digite novamente as coordenadas do disparo: "; 
+                cin >> linha >> coluna;    
             }
 
-            while(true){
-                cout << "\nDigite a linha e a coluna do disparo: ";
-                if(!ler_coordenada_valida(linha, coluna, num_linhas, num_colunas)) continue;
-
-                if(tabuleiro_referencia_jogador1[linha][coluna] == 'X' || tabuleiro_referencia_jogador1[linha][coluna] == 'O'){
-                    cout << "\nVoce ja realizou um disparo nessa posicao." << endl;
-                    continue;
-                }
-
-                break;
-            }
-
-            if(tabuleiro_jogador2[linha][coluna] == 'N'){
+            if(jogador2.tabuleiro[linha][coluna] == 'N'){
                 cout << "Voce acertou uma embarcacao!" << endl;
-                tabuleiro_referencia_jogador1[linha][coluna] = 'X';
+                jogador1.tabuleiro_referencia[linha][coluna] = 'X';
 
-                cout << "Tabuleiro atualizado: " << endl;
-                print_board_header(num_colunas);
-                for(int i = 0; i < num_linhas; i++){
-                    print_board_row(i, tabuleiro_referencia_jogador1[i], num_colunas, false);
-                }
+                cout << "Tabuleiro atualizado: \n.\n.\n." << endl;
+
+                imprime_tabuleiro_jogador(jogador1.tabuleiro_referencia,num_linhas,num_colunas);
+                cout << "\n.\n.\n." << endl;
             
                 numero_de_celulas_j2--;
                 if(!verifica_numero_celulas(numero_de_celulas_j2)){
-                    cout << "Todas as embarcacoes de "<< nome_j2 << " foram afundadas!" << endl;
-                    cout << nome_j1 << " Venceu!\nParabens!" << endl;
-                    cout << "\nPressione Enter para encerrar..." << endl;
-                    cin.ignore();
-                    finalizar_ncurses();
+                    cout << "Todas as embarcacoes de "<< jogador2.nome << " foram afundadas" << endl;
+                    cout << jogador1.nome << " Venceu.\nParabens!" << endl;
                     return 0;
                 }
             }
 
-            else if(tabuleiro_jogador2[linha][coluna] == '~'){
-                cout << "Voce errou." << endl;
-                tabuleiro_referencia_jogador1[linha][coluna] = 'O';
+            else if(jogador2.tabuleiro[linha][coluna] == '~'){
+                cout << "Voce errou.\n.\n.\n." << endl;
+                jogador1.tabuleiro_referencia[linha][coluna] = 'O';
 
-                cout << "Tabuleiro atualizado: " << endl;
-                print_board_header(num_colunas);
-                for(int i = 0; i < num_linhas; i++){
-                    print_board_row(i, tabuleiro_referencia_jogador1[i], num_colunas, false);
-                }
+                imprime_tabuleiro_jogador(jogador1.tabuleiro_referencia,num_linhas,num_colunas);
+                cout << "\n.\n.\n." << endl;
             }
+            cout << "Pressione qualquer tecla para continuar..." << endl;
+            _getch();
+            system("cls");
         }
 
 
         //Jogo Jogador 2:
         else {
             alternador += 1;
-            limpar_tela();
-            cout << "\n\nVez de: " << nome_j2 << endl;
-            cout << "\nSeu tabuleiro:" << endl;
+            cout << "\n\nVez de: " << jogador2.nome<< endl;
+            cout << "Tabuleiro: \n.\n.\n." << endl;
 
-            print_board_header(num_colunas);
-            for(int i = 0; i < num_linhas; i++){
-                print_board_row(i, tabuleiro_jogador2[i], num_colunas, true);
+                imprime_tabuleiro_jogador(jogador2.tabuleiro_referencia,num_linhas,num_colunas);
+                cout << "\n.\n.\n." << endl;
+
+
+            cout << "digite a linha e a coluna do disparo: ";
+            cin >> linha >> coluna;
+            cin.ignore();
+
+            while(linha>=num_linhas || coluna>=num_colunas){
+                cout << "\nPonto fora dos limites do tabuleiro" << endl;
+                cout << "Digite novamente as coordenadas do disparo: "; 
+                cin >> linha >> coluna;
             }
 
-            cout << "\nSeu campo de ataques:" << endl;
-            print_board_header(num_colunas);
-            for(int i = 0; i < num_linhas; i++){
-                print_board_row(i, tabuleiro_referencia_jogador2[i], num_colunas, false);
+            while(jogador2.tabuleiro_referencia[linha][coluna] == 'X' || jogador2.tabuleiro_referencia[linha][coluna] == 'O'){
+                cout << "\nVoce ja realizou um disparo nessa posicao." << endl;
+                cout << "Digite novamente as coordenadas do disparo: "; 
+                cin >> linha >> coluna;    
             }
 
-            while(true){
-                cout << "\nDigite a linha e a coluna do disparo: ";
-                if(!ler_coordenada_valida(linha, coluna, num_linhas, num_colunas)) continue;
-
-                if(tabuleiro_referencia_jogador2[linha][coluna] == 'X' || tabuleiro_referencia_jogador2[linha][coluna] == 'O'){
-                    cout << "\nVoce ja realizou um disparo nessa posicao." << endl;
-                    continue;
-                }
-
-                break;
-            }
-
-            if(tabuleiro_jogador1[linha][coluna] == 'N'){
+            if(jogador1.tabuleiro[linha][coluna] == 'N'){
                 cout << "Voce acertou uma embarcacao!" << endl;
-                tabuleiro_referencia_jogador2[linha][coluna] = 'X';
+                jogador2.tabuleiro_referencia[linha][coluna] = 'X';
+                cout << "Tabuleiro atualizado: \n.\n.\n." << endl;
 
-                cout << "Tabuleiro atualizado: " << endl;
-                print_board_header(num_colunas);
-                for(int i = 0; i < num_linhas; i++){
-                    print_board_row(i, tabuleiro_referencia_jogador2[i], num_colunas, false);
-                }
+                imprime_tabuleiro_jogador(jogador2.tabuleiro_referencia,num_linhas,num_colunas);
+                cout << "\n.\n.\n." << endl;
 
                 numero_de_celulas_j1--;
                 if(!verifica_numero_celulas(numero_de_celulas_j1)){
-                    cout << "Todas as embarcacoes de "<< nome_j1 << " foram afundadas!" << endl;
-                    cout << nome_j2 << " Venceu!\nParabens!" << endl;
-                    cout << "\nPressione Enter para encerrar..." << endl;
-                    cin.ignore();
-                    finalizar_ncurses();
+                    cout << "Todas as embarcacoes de "<< jogador1.nome << "foram afundadas" << endl;
+                    cout << jogador2.nome << "Venceu.\nParabens!" << endl;
                     return 0;
                 }
             }
 
-                        else if(tabuleiro_jogador1[linha][coluna] == '~'){
+            else if(jogador1.tabuleiro[linha][coluna] == '~'){
                 cout << "Voce errou." << endl;
-                tabuleiro_referencia_jogador2[linha][coluna] = 'O';
+                jogador2.tabuleiro_referencia[linha][coluna] = 'O';
+                cout << "\n.\n.\n." << endl;
 
-                cout << "Tabuleiro atualizado: " << endl;
-                print_board_header(num_colunas);
-                for(int i = 0; i < num_linhas; i++){
-                    print_board_row(i, tabuleiro_referencia_jogador2[i], num_colunas, false);
+
+                for(int i=0; i<num_colunas; i++){
+                    if(i<10)  cout << "\033[102m" << "  " << i;
+
+                    else  cout << "\033[102m" << " " << i;
                 }
+                cout << "  " << "\033[0m" << endl;
+
+                imprime_tabuleiro_jogador(jogador2.tabuleiro_referencia,num_linhas,num_colunas);
+                cout << ".\n.\n." << endl;
             }
+            cout << "Pressione qualquer tecla para continuar..." << endl;
+            _getch();
+            system("cls");
         }
     }
-    finalizar_ncurses();
 }
+
 
