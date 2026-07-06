@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "funcoes.h"
-#define MAX 1000
+#define MAX 100
 using namespace std;
 
 struct Jogador{
@@ -169,7 +169,7 @@ int main(){
             cout << "Tabuleiro: \n.\n.\n." << endl;
 
                 imprime_tabuleiro_jogador(jogador2.tabuleiro_referencia,num_linhas,num_colunas);
-                cout << "\n.\n.\n." << endl;
+                cout << ".\n.\n." << endl;
 
 
             cout << "digite a linha e a coluna do disparo: ";
@@ -208,14 +208,6 @@ int main(){
                 cout << "Voce errou." << endl;
                 jogador2.tabuleiro_referencia[linha][coluna] = 'O';
                 cout << "\n.\n.\n." << endl;
-
-
-                for(int i=0; i<num_colunas; i++){
-                    if(i<10)  cout << "\033[102m" << "  " << i;
-
-                    else  cout << "\033[102m" << " " << i;
-                }
-                cout << "  " << "\033[0m" << endl;
 
                 imprime_tabuleiro_jogador(jogador2.tabuleiro_referencia,num_linhas,num_colunas);
                 cout << ".\n.\n." << endl;
