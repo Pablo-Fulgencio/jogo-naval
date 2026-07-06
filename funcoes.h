@@ -3,7 +3,7 @@
 #include <fstream>
 #include <conio.h>
 #include "visual.h"
-#define MAX 1000
+#define MAX 100
 
 using namespace std;
 
@@ -94,7 +94,6 @@ bool leitura_jogadores(char nome1[51], char nome2[51]){
         jogador_1 << linha << " " << coluna << " " << orientacao << endl;
     }
 
-
     visual_leitura_jogador(nome2);
 
     for(int i=0; i<num_colunas; i++){
@@ -112,7 +111,7 @@ bool leitura_jogadores(char nome1[51], char nome2[51]){
                 else cout << "\033[102m" << i << " " << "\033[0m";
             }
 
-            else cout << "\033[104;34m~  " << "\033[0m"; 
+            cout << "\033[104;34m~  " << "\033[0m"; 
         }
         cout << "  " << "\n";
     }
@@ -360,13 +359,12 @@ bool menu(){
 void imprime_tabuleiro_jogador(char tabuleiro[MAX][MAX], int num_linhas, int num_colunas){
 
 
-    for (int i = 0; i < num_colunas; i++) {
-        if (i < 10)
-            cout << "\033[102m" << "  " << i;
+        for (int i = 0; i < num_colunas; i++) {
+            if (i < 10)
+                cout << "\033[102m" << "  " << i;
             else
                 cout << "\033[102m" << " " << i;
         }
-
         cout << "  " << "\033[0m" << endl;
 
         for (int i = 0; i < num_linhas; i++) {
@@ -390,7 +388,7 @@ void imprime_tabuleiro_jogador(char tabuleiro[MAX][MAX], int num_linhas, int num
             }
 
             cout << "  " << "\n";
-    }
+        }
 }
 
 
