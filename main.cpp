@@ -16,8 +16,9 @@ int main(){
     system("cls");
     if(!menu()) return 0;
 
+    jogo_naval();
     Jogador jogador1,jogador2;
-    cout << "Jogador 1:\nDigite seu nome: ";
+    cout << "\nJogador 1:\nDigite seu nome: ";
     cin.ignore(1000, '\n');
     cin.getline(jogador1.nome,51);
 
@@ -107,7 +108,8 @@ int main(){
         if(alternador%2==0){
             alternador += 1;
     
-            cout << "\n.\n.\n.\nVez de: \n.\n.\n." << jogador1.nome<< endl;
+            jogo_naval();
+            cout << "\nVez de: "<< jogador1.nome << "\n.\n.\n.\n" << endl;
     
             imprime_tabuleiro_jogador(jogador1.tabuleiro_referencia,num_linhas,num_colunas);
             cout << ".\n.\n." << endl;
@@ -120,7 +122,7 @@ int main(){
             cin.ignore(1000, '\n');
 
             //O loop so termina quando a posicao escolhida pelo jogador estiver dentro dos limites do tabuleiro
-            while(linha>=num_linhas || coluna>=num_colunas){
+            while(linha>=num_linhas || coluna>=num_colunas || linha <0 || coluna <0){
                 cout << "\nPonto fora dos limites do tabuleiro" << endl;
                 cout << "Digite novamente as coordenadas do disparo: "; 
                 cin >> linha >> coluna;
@@ -172,7 +174,8 @@ int main(){
         else {
             alternador += 1;
 
-            cout << "\n.\n.\n.\nVez de: \n.\n.\n." << jogador2.nome<< endl;
+            jogo_naval();
+            cout << "Vez de: " <<jogador2.nome << "\n.\n.\n.\n" << endl;
 
             imprime_tabuleiro_jogador(jogador2.tabuleiro_referencia,num_linhas,num_colunas);
             cout << ".\n.\n." << endl;
@@ -184,7 +187,7 @@ int main(){
             cin >> linha >> coluna;
             cin.ignore(1000, '\n');
 
-            while(linha>=num_linhas || coluna>=num_colunas){
+            while(linha>=num_linhas || coluna>=num_colunas || linha <0 || coluna <0){
                 cout << "\nPonto fora dos limites do tabuleiro" << endl;
                 cout << "Digite novamente as coordenadas do disparo: "; 
                 cin >> linha >> coluna;
@@ -209,8 +212,8 @@ int main(){
 
                 numero_de_celulas_j1--;
                 if(!verifica_numero_celulas(numero_de_celulas_j1)){
-                    cout << "Todas as embarcacoes de "<< jogador1.nome << "foram afundadas" << endl;
-                    cout << jogador2.nome << "Venceu.\nParabens!" << endl;
+                    cout << "Todas as embarcacoes de "<< jogador1.nome << " foram afundadas" << endl;
+                    cout << jogador2.nome << " Venceu.\nParabens!" << endl;
                     return 0;
                 }
             }
