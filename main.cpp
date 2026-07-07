@@ -121,20 +121,27 @@ int main(){
             cin >> linha >> coluna;
             cin.ignore(1000, '\n');
 
-            //O loop so termina quando a posicao escolhida pelo jogador estiver dentro dos limites do tabuleiro
-            while(linha>=num_linhas || coluna>=num_colunas || linha <0 || coluna <0){
-                cout << "\nPonto fora dos limites do tabuleiro" << endl;
-                cout << "Digite novamente as coordenadas do disparo: "; 
-                cin >> linha >> coluna;
-                cin.ignore(1000, '\n');
-            }
+            while(true){
+                
+                if(linha <0 || linha>=num_linhas || coluna>=num_colunas || coluna <0){
+                    cout << "Ponto fora dos limites do tabuleiro\n" << endl;
+                    cout << "Digite novamente as coordenadas do disparo: "; 
+                    cin >> linha >> coluna;
+                    cin.ignore(1000, '\n');
+                    continue;
+                }
 
-            //O loop verifica se a posicao escolhida ja nao foi escolhida anteriormente.
-            while(jogador1.tabuleiro_referencia[linha][coluna] == 'X' || jogador1.tabuleiro_referencia[linha][coluna] == 'O'){
-                cout << "\nVoce ja realizou um disparo nessa posicao." << endl;
-                cout << "Digite novamente as coordenadas do disparo: "; 
-                cin >> linha >> coluna;    
-                cin.ignore(1000, '\n');
+                //verifica se a posicao escolhida ja nao foi escolhida anteriormente.
+                if(jogador1.tabuleiro_referencia[linha][coluna] == 'X' || jogador1.tabuleiro_referencia[linha][coluna] == 'O'){
+                    cout << "Voce ja realizou um disparo nessa posicao.\n" << endl;
+                    cout << "Digite novamente as coordenadas do disparo: "; 
+                    cin >> linha >> coluna;    
+                    cin.ignore(1000, '\n');
+                    continue;
+                }
+
+                //So executa o break quando a posicao estiver dentro dos limites.
+                break;
             }
 
             if(jogador2.tabuleiro[linha][coluna] == 'N'){
@@ -187,18 +194,27 @@ int main(){
             cin >> linha >> coluna;
             cin.ignore(1000, '\n');
 
-            while(linha>=num_linhas || coluna>=num_colunas || linha <0 || coluna <0){
-                cout << "\nPonto fora dos limites do tabuleiro" << endl;
-                cout << "Digite novamente as coordenadas do disparo: "; 
-                cin >> linha >> coluna;
-                cin.ignore(1000, '\n');
-            }
+            while(true){
+                
+                if(linha <0 || linha>=num_linhas || coluna>=num_colunas || coluna <0){
+                    cout << "Ponto fora dos limites do tabuleiro\n" << endl;
+                    cout << "Digite novamente as coordenadas do disparo: "; 
+                    cin >> linha >> coluna;
+                    cin.ignore(1000, '\n');
+                    continue;
+                }
 
-            while(jogador2.tabuleiro_referencia[linha][coluna] == 'X' || jogador2.tabuleiro_referencia[linha][coluna] == 'O'){
-                cout << "\nVoce ja realizou um disparo nessa posicao." << endl;
-                cout << "Digite novamente as coordenadas do disparo: "; 
-                cin >> linha >> coluna;   
-                cin.ignore(1000, '\n'); 
+                //verifica se a posicao escolhida ja nao foi escolhida anteriormente.
+                if(jogador2.tabuleiro_referencia[linha][coluna] == 'X' || jogador2.tabuleiro_referencia[linha][coluna] == 'O'){
+                    cout << "Voce ja realizou um disparo nessa posicao.\n" << endl;
+                    cout << "Digite novamente as coordenadas do disparo: "; 
+                    cin >> linha >> coluna;    
+                    cin.ignore(1000, '\n');
+                    continue;
+                }
+
+                //So executa o break quando a posicao estiver dentro dos limites.
+                break;
             }
 
             if(jogador1.tabuleiro[linha][coluna] == 'N'){
