@@ -9,6 +9,7 @@ using namespace std;
 
 void imprime_tabuleiro_jogador(char tabuleiro[MAX][MAX], int num_linhas, int num_colunas){
 
+
         for (int i = 0; i < num_colunas; i++) {
             if (i < 10)
                 cout << "\033[102m" << "  " << i;
@@ -41,6 +42,7 @@ void imprime_tabuleiro_jogador(char tabuleiro[MAX][MAX], int num_linhas, int num
         }
 }
 
+
 //Funcao que recebe as dimensoes do tabuleiro a ser usado durante o jogo e arquivando.
 bool configuracao(){
 
@@ -59,7 +61,7 @@ bool configuracao(){
     conf.close();
 
     //Validacao numero de embarcacoes do arquivo de configuracao:
-    if(!num_de_linhas || !num_de_colunas || !num_de_embarcacoes) return false;
+    if(num_de_linhas <= 0 || num_de_colunas <=0 || num_de_embarcacoes <=0) return false;
 
     //Numero maximo de embarcacoes possiveis com base no tamanho do tabuleiro.
     int numero_max_embarcacoes = (num_de_linhas*num_de_colunas)/2;
@@ -183,6 +185,7 @@ bool leitura_jogadores(char nome1[51], char nome2[51]){
 
     visual_leitura_jogador(nome1);
 
+    //Imprime tabuleiro com marcacoes e ~ (agua).
     for(int i=0; i<num_colunas; i++){
         if(i<10)  cout << "\033[102m" << "  " << i;
 
@@ -211,6 +214,7 @@ bool leitura_jogadores(char nome1[51], char nome2[51]){
 
     visual_leitura_jogador(nome2);
 
+    //Imprime tabuleiro com marcacoes e ~ (agua).
     for(int i=0; i<num_colunas; i++){
         if(i<10)  cout << "\033[102m" << "  " << i;
 
@@ -277,8 +281,7 @@ bool validacao(char tabuleiro1[MAX][MAX],char tabuleiro2[MAX][MAX]){
         while(jogador_1 >> linha){
             jogador_1 >> coluna >> orientacao;
 
-            //Verificacao da primeira celula da embarcacao.
-            if(linha > num_linhas || coluna > num_colunas){
+            if(linha >= num_linhas || coluna >= num_colunas || linha < 0 || coluna < 0){
                 cout << "Erro: embarcacao fora do limite." << endl;
                 return false;
             }
@@ -292,7 +295,6 @@ bool validacao(char tabuleiro1[MAX][MAX],char tabuleiro2[MAX][MAX]){
                 return false;
             }
 
-            //Verificacao da segunda celula da embarcacao.
             if(orientacao == 'V' || orientacao == 'v'){
                 linha += 1;
             }
@@ -304,12 +306,12 @@ bool validacao(char tabuleiro1[MAX][MAX],char tabuleiro2[MAX][MAX]){
                 return false;
             }
 
-            if(linha > num_linhas || coluna > num_colunas){
+            if(linha >= num_linhas || coluna >= num_colunas || linha < 0 || coluna < 0){
                 cout << "Erro: embarcacao fora do limite." << endl;
                 return false;
             }
 
-            if(tabuleiro1[linha][coluna] != 'N'){ 
+            else if(tabuleiro1[linha][coluna] != 'N'){ 
                 tabuleiro1[linha][coluna] = 'N';
             }
 
@@ -334,8 +336,7 @@ bool validacao(char tabuleiro1[MAX][MAX],char tabuleiro2[MAX][MAX]){
         while(jogador_2 >> linha){
             jogador_2>> coluna >> orientacao;
 
-            //Verificacao da primeira celula da embarcacao.
-            if(linha > num_linhas || coluna > num_colunas){
+            if(linha >= num_linhas || coluna >= num_colunas || linha < 0 || coluna < 0){
                 cout << "Erro: embarcacao fora do limite." << endl;
                 return false;
             }
@@ -349,7 +350,6 @@ bool validacao(char tabuleiro1[MAX][MAX],char tabuleiro2[MAX][MAX]){
                 return false;
             }
 
-            //Verificacao da segunda celula da embarcacao.
             if(orientacao == 'V' || orientacao == 'v'){
                 linha += 1;
             }
@@ -361,7 +361,7 @@ bool validacao(char tabuleiro1[MAX][MAX],char tabuleiro2[MAX][MAX]){
                 return false;
             }
 
-            if(linha > num_linhas || coluna > num_colunas){
+            if(linha >= num_linhas || coluna >= num_colunas || linha < 0 || coluna < 0){
                 cout << "Erro: embarcacao fora do limite." << endl;
                 return false;
             }
