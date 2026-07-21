@@ -212,7 +212,7 @@ int main(){
                     cin.ignore(1000, '\n');
                     continue;
                 }
-
+//oi
                 //So executa o break quando a posicao estiver dentro dos limites.
                 break;
             }
