@@ -1,15 +1,9 @@
 #include <iostream>
 #include <fstream>
+#include <conio.h>
 #include "funcoes.h"
-#define MAX 100
-using namespace std;
 
-//Estrutura com dados do jogo dos jogadores
-struct Jogador{
-    char nome[51];
-    char tabuleiro[MAX][MAX];
-    char tabuleiro_referencia[MAX][MAX];
-};
+using namespace std;
 
 int main(){
 
